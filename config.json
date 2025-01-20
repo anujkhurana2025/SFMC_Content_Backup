@@ -1,0 +1,14 @@
+{
+  "salesforce": {
+    "client_id": "your_client_id",
+    "client_secret": "your_client_secret",
+    "auth_url": "https://your_subdomain.auth.marketingcloudapis.com/v2/token",
+    "content_url": "https://your_subdomain.rest.marketingcloudapis.com/v1/content/assets"
+  },
+  "google_cloud": {
+    "bucket_name": "your_bucket_name"
+  },
+  "settings": {
+    "backup_folder_prefix": "backup_"
+  }
+}
