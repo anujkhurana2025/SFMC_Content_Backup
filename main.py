@@ -33,10 +33,10 @@ def fetch_content_assets(access_token, content_url, last_run):
     return response.json()["items"]
 
 # Backup content assets to Google Cloud Storage
-def backup_to_gcs(content_assets, bucket_name, backup_folder_prefix):
+def backup_to_gcs(content_assets, bucket_name, backup_prefix):
     storage_client = storage.Client()
     bucket = storage_client.get_bucket(bucket_name)
-    backup_folder = f"{backup_folder_prefix}{datetime.now().strftime('%d%m%y')}/"
+    backup_folder = f"{backup_prefix}{datetime.now().strftime('%d%m%y')}/"
     
     for asset in content_assets:
         file_path = f"{backup_folder}{asset['id']}.json"
@@ -75,7 +75,7 @@ def main():
     auth_url = config["salesforce"]["auth_url"]
     content_url = config["salesforce"]["content_url"]
     bucket_name = config["google_cloud"]["bucket_name"]
-    backup_folder_prefix = config["settings"]["backup_folder_prefix"]
+    backup_prefix = config["settings"]["backup_prefix"]
 
     # Get last run timestamp
     last_run = None
@@ -93,7 +93,7 @@ def main():
 
     # Backup to Google Cloud Storage if there are new/updated assets
     if content_assets:
-        backup_to_gcs(content_assets, bucket_name, backup_folder_prefix)
+        backup_to_gcs(content_assets, bucket_name, backup_prefix)
     else:
         print("No new or updated content assets found.")
 
