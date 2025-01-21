@@ -44,8 +44,28 @@ def backup_to_gcs(content_assets, bucket_name, backup_folder_prefix):
         blob.upload_from_string(json.dumps(asset, indent=2))
         print(f"Uploaded: {file_path}")
 
+# Check if the script has already run today
+def has_run_today():
+    if os.path.exists(LAST_RUN_FILE):
+        with open(LAST_RUN_FILE, "r") as f:
+            last_run = datetime.fromisoformat(f.read().strip())
+            # Compare dates (ignore time)
+            if last_run.date() == datetime.utcnow().date():
+                return True
+    return False
+
+# Update the last run timestamp
+def update_last_run_timestamp():
+    with open(LAST_RUN_FILE, "w") as f:
+        f.write(datetime.utcnow().isoformat())
+
 # Main function
 def main():
+    # Ensure the script runs only once per day
+    if has_run_today():
+        print("Script has already run today. Exiting.")
+        return
+
     # Load configuration
     config = load_config()
 
@@ -77,9 +97,8 @@ def main():
     else:
         print("No new or updated content assets found.")
 
-    # Update last run timestamp
-    with open(LAST_RUN_FILE, "w") as f:
-        f.write(datetime.utcnow().isoformat())
+    # Update the last run timestamp
+    update_last_run_timestamp()
 
 # Run script
 if __name__ == "__main__":
